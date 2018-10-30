@@ -1,0 +1,90 @@
+[
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/color_fragment_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/24066c301e6c6658aecbe25e7edc1b74a2afc332/output/res/raw/color_fragment_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/simple_vertex_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/24066c301e6c6658aecbe25e7edc1b74a2afc332/output/res/raw/simple_vertex_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/nxtstartupsound.wav",
+        "source": "/Users/ryanjin/.android/build-cache/8baef12a6d012fe814d1e890980377cc0420fd91/output/res/raw/nxtstartupsound.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/errormessage.wav",
+        "source": "/Users/ryanjin/.android/build-cache/a37380027b2b34a213bca312c181048379ec5656/output/res/raw/errormessage.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/simple_vertex_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/ca182bf097d3e2c2299ddb5815ccc26db005828a/output/res/raw/simple_vertex_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/cube_mesh_fragment_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/24066c301e6c6658aecbe25e7edc1b74a2afc332/output/res/raw/cube_mesh_fragment_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/chimeconnect.wav",
+        "source": "/Users/ryanjin/.android/build-cache/8baef12a6d012fe814d1e890980377cc0420fd91/output/res/raw/chimeconnect.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/nxtstartupsound.wav",
+        "source": "/Users/ryanjin/.android/build-cache/a37380027b2b34a213bca312c181048379ec5656/output/res/raw/nxtstartupsound.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/warningmessage.wav",
+        "source": "/Users/ryanjin/.android/build-cache/a37380027b2b34a213bca312c181048379ec5656/output/res/raw/warningmessage.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/cube_mesh_fragment_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/ca182bf097d3e2c2299ddb5815ccc26db005828a/output/res/raw/cube_mesh_fragment_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/texture_fragment_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/ca182bf097d3e2c2299ddb5815ccc26db005828a/output/res/raw/texture_fragment_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/cube_mesh_vertex_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/ca182bf097d3e2c2299ddb5815ccc26db005828a/output/res/raw/cube_mesh_vertex_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/chimeconnect.wav",
+        "source": "/Users/ryanjin/.android/build-cache/a37380027b2b34a213bca312c181048379ec5656/output/res/raw/chimeconnect.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/texture_vertex_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/ca182bf097d3e2c2299ddb5815ccc26db005828a/output/res/raw/texture_vertex_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/chimedisconnect.wav",
+        "source": "/Users/ryanjin/.android/build-cache/a37380027b2b34a213bca312c181048379ec5656/output/res/raw/chimedisconnect.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/errormessage.wav",
+        "source": "/Users/ryanjin/.android/build-cache/8baef12a6d012fe814d1e890980377cc0420fd91/output/res/raw/errormessage.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/texture_fragment_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/24066c301e6c6658aecbe25e7edc1b74a2afc332/output/res/raw/texture_fragment_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/texture_vertex_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/24066c301e6c6658aecbe25e7edc1b74a2afc332/output/res/raw/texture_vertex_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/debug/raw/cube_mesh_vertex_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/24066c301e6c6658aecbe25e7edc1b74a2afc332/output/res/raw/cube_mesh_vertex_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/warningmessage.wav",
+        "source": "/Users/ryanjin/.android/build-cache/8baef12a6d012fe814d1e890980377cc0420fd91/output/res/raw/warningmessage.wav"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/color_fragment_shader.glsl",
+        "source": "/Users/ryanjin/.android/build-cache/ca182bf097d3e2c2299ddb5815ccc26db005828a/output/res/raw/color_fragment_shader.glsl"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/debug/raw/chimedisconnect.wav",
+        "source": "/Users/ryanjin/.android/build-cache/8baef12a6d012fe814d1e890980377cc0420fd91/output/res/raw/chimedisconnect.wav"
+    }
+]

@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/TeamCode/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_launcher.png",
+        "source": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/bundles/default/res/drawable-hdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/TeamCode/build/intermediates/res/merged/debug/drawable-hdpi-v4/button_shape.xml",
+        "source": "/Users/ryanjin/.android/build-cache/a37380027b2b34a213bca312c181048379ec5656/output/res/drawable-hdpi-v4/button_shape.xml"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/TeamCode/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_launcher.png",
+        "source": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/bundles/default/res/drawable-hdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/TeamCode/build/intermediates/res/merged/debug/drawable-hdpi-v4/button_shape.xml",
+        "source": "/Users/ryanjin/.android/build-cache/8baef12a6d012fe814d1e890980377cc0420fd91/output/res/drawable-hdpi-v4/button_shape.xml"
+    }
+]

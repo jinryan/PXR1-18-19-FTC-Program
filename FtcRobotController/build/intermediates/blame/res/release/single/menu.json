@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/release/menu/menu_server.xml",
+        "source": "/Users/ryanjin/.android/build-cache/877d058f05ec88e81e873e7b924085f7ee7b7b65/output/res/menu/menu_server.xml"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/release/menu/main_menu.xml",
+        "source": "/Users/ryanjin/.android/build-cache/8f8a061236aba0a61e58499b457cce70f3debf66/output/res/menu/main_menu.xml"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/release/menu/main_menu.xml",
+        "source": "/Users/ryanjin/.android/build-cache/1cb82fa67c9dc4fa20f999950f8d42455bbd22c4/output/res/menu/main_menu.xml"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/release/menu/ftc_robot_controller.xml",
+        "source": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/src/main/res/menu/ftc_robot_controller.xml"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/PXR1 Coding/PXR1/FtcRobotController/build/intermediates/res/merged/release/menu/menu_server.xml",
+        "source": "/Users/ryanjin/.android/build-cache/39e4c5af366a13465c1152163249fd882f06ee49/output/res/menu/menu_server.xml"
+    },
+    {
+        "merged": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/build/intermediates/res/merged/release/menu/ftc_robot_controller.xml",
+        "source": "/Users/ryanjin/Desktop/School/FTC/ftc_app-master/FtcRobotController/src/main/res/menu/ftc_robot_controller.xml"
+    }
+]
