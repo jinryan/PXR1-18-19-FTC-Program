@@ -3,7 +3,7 @@
  * @author lizlooney@google.com (Liz Looney)
  */
 
-// TODO(lizlooney): This file is misnamed. It includes utilities not related to hardware.
+// Note: This file is misnamed. It includes some utilities not related to hardware.
 
 /**
  * Fetches the JavaScript code related to the hardware in the active configuration and calls the

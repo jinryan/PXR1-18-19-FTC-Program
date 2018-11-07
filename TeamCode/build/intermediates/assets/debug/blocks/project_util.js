@@ -115,6 +115,26 @@ function deleteProjects(starDelimitedProjectNames, callback) {
   }
 }
 
+function getBlocksJavaClassName(projectName, callback) {
+  if (typeof blocksIO !== 'undefined') {
+    // html/js is within the WebView component within the Android app.
+    getBlocksJavaClassNameViaBlocksIO(projectName, callback);
+  } else if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+    // html/js is in a browser, loaded as an http:// URL.
+    getBlocksJavaClassNameViaHttp(projectName, callback);
+  }
+}
+
+function saveBlocksJava(relativeFileName, javaContent, callback) {
+  if (typeof blocksIO !== 'undefined') {
+    // html/js is within the WebView component within the Android app.
+    saveBlocksJavaViaBlocksIO(relativeFileName, javaContent, callback);
+  } else if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+    // html/js is in a browser, loaded as an http:// URL.
+    saveBlocksJavaViaHttp(relativeFileName, javaContent, callback);
+  }
+}
+
 //..........................................................................
 // Code used when html/js is within the WebView component within the
 // Android app.
@@ -210,6 +230,26 @@ function deleteProjectsViaBlocksIO(starDelimitedProjectNames, callback) {
   }
 }
 
+function getBlocksJavaClassNameViaBlocksIO(projectName, callback) {
+  var className = blocksIO.getBlocksJavaClassName(projectName);
+  if (className) {
+    callback(className, '');
+  } else {
+    // TODO(lizlooney): Provide more information about the error.
+    callback(null, 'Get blocks java class name failed.');
+  }
+}
+
+function saveBlocksJavaViaBlocksIO(relativeFileName, javaContent, callback) {
+  var success = blocksIO.saveBlocksJava(relativeFileName, javaContent);
+  if (success) {
+    callback(true, '');
+  } else {
+    // TODO(lizlooney): Provide more information about the error.
+    callback(false, 'Save Java code failed.');
+  }
+}
+
 //..........................................................................
 // Code used when html/js is in a browser, loaded as an http:// URL.
 
@@ -223,6 +263,8 @@ function deleteProjectsViaBlocksIO(starDelimitedProjectNames, callback) {
 // URI_COPY_PROJECT
 // URI_ENABLE_PROJECT
 // URI_DELETE_PROJECTS
+// URI_GET_BLOCKS_JAVA_CLASS_NAME
+// URI_SAVE_BLOCKS_JAVA
 // PARAM_NAME
 // PARAM_NEW_NAME
 // PARAM_BLK
@@ -408,6 +450,44 @@ function deleteProjectsViaHttp(starDelimitedProjectNames, callback) {
       } else {
         // TODO(lizlooney): Use specific error messages for various xhr.status values.
         callback(false, 'Delete projects failed. Error code ' + xhr.status + '. ' + xhr.statusText);
+      }
+    }
+  };
+  xhr.send(params);
+}
+
+function getBlocksJavaClassNameViaHttp(projectName, callback) {
+  var xhr = new XMLHttpRequest();
+  var params = PARAM_NAME + '=' + encodeURIComponent(projectName);
+  xhr.open('POST', URI_GET_BLOCKS_JAVA_CLASS_NAME, true);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var className = xhr.responseText;
+        callback(className, '');
+      } else {
+        // TODO(lizlooney): Use specific error messages for various xhr.status values.
+        callback(null, 'Get blocks java class name failed. Error code ' + xhr.status + '. ' + xhr.statusText);
+      }
+    }
+  };
+  xhr.send(params);
+}
+
+function saveBlocksJavaViaHttp(relativeFileName, javaContent, callback) {
+  var xhr = new XMLHttpRequest();
+  var params = PARAM_NAME + '=' + encodeURIComponent(relativeFileName) +
+      '&' + PARAM_JAVA + '=' + encodeURIComponent(javaContent);
+  xhr.open('POST', URI_SAVE_BLOCKS_JAVA, true);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        callback(true, '');
+      } else {
+        // TODO(lizlooney): Use specific error messages for various xhr.status values.
+        callback(false, 'Save Java code failed. Error code ' + xhr.status + '. ' + xhr.statusText);
       }
     }
   };
