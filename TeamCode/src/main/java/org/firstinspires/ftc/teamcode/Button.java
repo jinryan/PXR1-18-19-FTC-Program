@@ -13,7 +13,7 @@ public class Button {
 
     public boolean rebound(boolean cs) {
         currentState = cs;
-        if (previousState == true && currentState == false) {
+        if (previousState && !currentState) {
             previousState = currentState;
             return true;
         } else {
