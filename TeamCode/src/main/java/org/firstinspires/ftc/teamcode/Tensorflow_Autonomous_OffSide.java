@@ -35,6 +35,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -52,9 +55,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Autonomous: TensorFlow Object Detection", group = "Autonomous")
+@Autonomous(name = "Autonomous-OFFSIDE: TensorFlow Object Detection", group = "Autonomous")
 //@Disabled
-public class Tensorflow_Autonomous extends LinearOpMode {
+public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -62,6 +65,8 @@ public class Tensorflow_Autonomous extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private int position = -1;
+
+
 
     static final double     COUNTS_PER_MOTOR_REV    = 1680;
     static final double     DRIVE_GEAR_REDUCTION    = 0.667;     // This is < 1.0 if geared UP
@@ -90,6 +95,10 @@ public class Tensorflow_Autonomous extends LinearOpMode {
      */
     private VuforiaLocalizer vuforia;
 
+    double currentAngle = 0;
+    double targetAngle = 0;
+    double realAngle = 0;
+
     /**
      * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
      * Detection engine.
@@ -108,8 +117,10 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        robot.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        robot.leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        robot.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
@@ -172,13 +183,23 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                 //move in front of the gold mineral
             if (position == 0) {
                 encoderSlideByPos(-3500, 1,999);
-                encoderDriveByPos(-3000,1,999);
+                encoderDriveByPos(-2000,1,999);
             } else if (position == 1) {
-                encoderDriveByPos(-3000,1,999);
+                encoderDriveByPos(-2000,1,999);
             } else if (position == 2) {
                 encoderSlideByPos(3500, 1,999);
-                encoderDriveByPos(-3000,1,999);
+                encoderDriveByPos(-2000,1,999);
             }
+
+            encoderDriveByPos(200,1,999);
+
+            targetAngle = currentAngle + 135;
+            if (currentAngle > 180) {
+                currentAngle = -360 + currentAngle;
+            }
+
+
+
         }
 
         if (tfod != null) {
@@ -225,6 +246,21 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         robot.hMotor.setPower(0);
 
         robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void turnToAngle(double angle, double speed, double timeoutS) {
+        robot.rightMotor.setPower(speed);
+        robot.leftMotor.setPower(-speed);
+        while (opModeIsActive() && runtime.seconds() < timeoutS) {
+            if (currentAngle < 0) {
+                realAngle = 360 - Math.abs(currentAngle);
+            } else {
+                realAngle = currentAngle;
+            }
+            if (realAngle < angle) {
+
+            }
+        }
     }
 
     /**

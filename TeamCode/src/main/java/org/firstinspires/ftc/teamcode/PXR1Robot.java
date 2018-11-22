@@ -17,6 +17,7 @@ public class PXR1Robot {
     public DcMotor leftMotor = null;
     public DcMotor rightMotor = null;
     public DcMotor hMotor = null;
+    public DcMotor hooker = null;
     public BNO055IMU imu = null;
 
 
@@ -54,6 +55,7 @@ public class PXR1Robot {
         leftMotor = hardwareMap.get(DcMotor.class, "left");
         rightMotor = hardwareMap.get(DcMotor.class, "right");
         hMotor = hardwareMap.get(DcMotor.class, "h");
+        hooker = hardwareMap.get(DcMotor.class, "hooker");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 

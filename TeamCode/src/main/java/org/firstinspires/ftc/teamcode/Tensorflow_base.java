@@ -29,10 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -52,23 +50,12 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Autonomous: TensorFlow Object Detection", group = "Autonomous")
+@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
 //@Disabled
-public class Tensorflow_Autonomous extends LinearOpMode {
+public class Tensorflow_base extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-
-    private ElapsedTime runtime = new ElapsedTime();
-
-    private int position = -1;
-
-    static final double     COUNTS_PER_MOTOR_REV    = 1680;
-    static final double     DRIVE_GEAR_REDUCTION    = 0.667;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-
-    PXR1Robot robot = new PXR1Robot();
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -101,15 +88,6 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
-        robot.init(hardwareMap);
-        robot.leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.hMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        robot.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
@@ -134,97 +112,39 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        if (updatedRecognitions.size() == 3) {
-                            int goldMineralX = -1;
-                            int silverMineral1X = -1;
-                            int silverMineral2X = -1;
-                            for (Recognition recognition : updatedRecognitions) {
-                                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                    goldMineralX = (int) recognition.getLeft();
-                                } else if (silverMineral1X == -1) {
-                                    silverMineral1X = (int) recognition.getLeft();
-                                } else {
-                                    silverMineral2X = (int) recognition.getLeft();
-                                }
-                            }
-                            if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                                if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                                    telemetry.addData("Gold Mineral Position", "Left");
-                                    position = 0;
-                                } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                                    telemetry.addData("Gold Mineral Position", "Right");
-                                    position = 2;
-                                } else {
-                                    telemetry.addData("Gold Mineral Position", "Center");
-                                    position = 1;
-                                }
-                            }
-                            telemetry.update();
-                            break;
+                      telemetry.addData("# Object Detected", updatedRecognitions.size());
+                      if (updatedRecognitions.size() == 3) {
+                        int goldMineralX = -1;
+                        int silverMineral1X = -1;
+                        int silverMineral2X = -1;
+                        for (Recognition recognition : updatedRecognitions) {
+                          if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                            goldMineralX = (int) recognition.getLeft();
+                          } else if (silverMineral1X == -1) {
+                            silverMineral1X = (int) recognition.getLeft();
+                          } else {
+                            silverMineral2X = (int) recognition.getLeft();
+                          }
                         }
-                        telemetry.update();
-
+                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                          if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+                            telemetry.addData("Gold Mineral Position", "Left");
+                          } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+                            telemetry.addData("Gold Mineral Position", "Right");
+                          } else {
+                            telemetry.addData("Gold Mineral Position", "Center");
+                          }
+                        }
+                      }
+                      telemetry.update();
                     }
                 }
-            }
-            encoderDriveByPos(-500, 1, 999);
-                //move in front of the gold mineral
-            if (position == 0) {
-                encoderSlideByPos(-3500, 1,999);
-                encoderDriveByPos(-3000,1,999);
-            } else if (position == 1) {
-                encoderDriveByPos(-3000,1,999);
-            } else if (position == 2) {
-                encoderSlideByPos(3500, 1,999);
-                encoderDriveByPos(-3000,1,999);
             }
         }
 
         if (tfod != null) {
             tfod.shutdown();
         }
-    }
-
-    public void encoderDriveByPos(int pos, double speed, double timeoutS) {
-        int newLeftTarget = robot.leftMotor.getCurrentPosition() + pos;
-        int newRightTarget = robot.rightMotor.getCurrentPosition() + pos;
-        robot.leftMotor.setTargetPosition(newLeftTarget);
-        robot.rightMotor.setTargetPosition(newRightTarget);
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.leftMotor.setPower(Math.abs(speed));
-        robot.rightMotor.setPower(Math.abs(speed));
-
-        while (opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
-        }
-
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void encoderSlideByPos(int pos, double speed, double timeoutS) {
-        int newSlideTarget = robot.hMotor.getCurrentPosition() + pos;
-        robot.hMotor.setTargetPosition(newSlideTarget);
-
-        robot.hMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.hMotor.setPower(Math.abs(speed));
-
-        while (opModeIsActive() &&
-                (runtime.seconds() < timeoutS) && robot.hMotor.isBusy()) {
-        }
-
-        robot.hMotor.setPower(0);
-
-        robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**

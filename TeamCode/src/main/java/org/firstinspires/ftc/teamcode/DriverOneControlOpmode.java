@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 @TeleOp(name="Single Driver Opmode", group="TeleOp")
 
 public class DriverOneControlOpmode extends OpMode
@@ -85,6 +89,10 @@ public class DriverOneControlOpmode extends OpMode
         robot.fit18();
     }
 
+    public void hookerDrive() {
+        robot.hooker.setPower(gamepad2.right_trigger - gamepad1.left_trigger);
+    }
+
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
@@ -109,6 +117,7 @@ public class DriverOneControlOpmode extends OpMode
         updateMicroadjust();
         manualDrive();
         updateReverse();
+        hookerDrive();
         updateMotorEncoderValues();
     }
 
@@ -121,7 +130,10 @@ public class DriverOneControlOpmode extends OpMode
 
 
     private void updateMotorEncoderValues() {
+        double currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        telemetry.addData("Angle: ", currentAngle);
         telemetry.addData("Left motor encoder:", robot.leftMotor.getCurrentPosition());
         telemetry.addData("Right motor encoder:", robot.rightMotor.getCurrentPosition());
+        telemetry.addData("H motor encoder:", robot.hMotor.getCurrentPosition());
     }
 }
