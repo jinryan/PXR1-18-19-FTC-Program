@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/Users/ryanjin/Downloads/ftc_app-master/FtcRobotController/src/main/jniLibs"/></dataSet><dataSet config="debug"><source path="/Users/ryanjin/Downloads/ftc_app-master/FtcRobotController/src/debug/jniLibs"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/Users/ryanjin/Documents/GitHub/PXR1-18-19-FTC-Program/FtcRobotController/src/main/jniLibs"/></dataSet><dataSet config="debug"><source path="/Users/ryanjin/Documents/GitHub/PXR1-18-19-FTC-Program/FtcRobotController/src/debug/jniLibs"/></dataSet></merger>

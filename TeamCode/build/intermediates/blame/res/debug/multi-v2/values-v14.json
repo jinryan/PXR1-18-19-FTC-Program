@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/ryanjin/Downloads/ftc_app-master/TeamCode/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v14/values-v14.xml",
+            "outputFile": "/Users/ryanjin/Documents/GitHub/PXR1-18-19-FTC-Program/TeamCode/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v14/values-v14.xml",
             "map": [
                 {
-                    "source": "/Users/ryanjin/.gradle/caches/transforms-1/files-1.1/RobotCore-release.aar/a735e52dbc240e3e0b83be979e0382c8/res/values-v14/values-v14.xml",
+                    "source": "/Users/ryanjin/.gradle/caches/transforms-1/files-1.1/RobotCore-release.aar/cc3917816c3f4f7312ccae6f883bc5e7/res/values-v14/values-v14.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
