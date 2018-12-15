@@ -57,6 +57,8 @@ public class Tensorflow_base extends LinearOpMode {
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
+    private int position = -1;
+
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -98,7 +100,11 @@ public class Tensorflow_base extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
-        waitForStart();
+//        waitForStart();
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("status", "waiting for start command...");
+            telemetry.update();
+        }
 
         if (opModeIsActive()) {
             /** Activate Tensor Flow Object Detection. */
@@ -135,11 +141,37 @@ public class Tensorflow_base extends LinearOpMode {
                             telemetry.addData("Gold Mineral Position", "Center");
                           }
                         }
+                        telemetry.update();
+                      } else if (updatedRecognitions.size() == 2) {
+                          boolean left = true;
+                          boolean middle = true;
+                          for (Recognition recognition : updatedRecognitions) {
+                              telemetry.addData("Position", recognition.getLeft());
+                              if (recognition.getLeft() < 400 && recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                                  left = false;
+                              } else if (recognition.getLeft() > 600 && recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                                  middle = false;
+                              }
+                          }
+                          if (!left && !middle) {
+                              position = 2;
+                          } else if (!left && middle) {
+                              position = 1;
+                          } else {
+                              position = 0;
+                          }
+                          telemetry.update();
+                          break;
                       }
                       telemetry.update();
                     }
                 }
             }
+        }
+
+        while (opModeIsActive()) {
+            telemetry.addData("Position: ", position);
+            telemetry.update();
         }
 
         if (tfod != null) {

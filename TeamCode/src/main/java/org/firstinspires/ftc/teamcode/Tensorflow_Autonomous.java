@@ -35,6 +35,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -67,6 +70,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 0.667;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    double currentAngle = 0;
 
     PXR1Robot robot = new PXR1Robot();
 
@@ -111,6 +115,8 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         robot.leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
         } else {
@@ -120,7 +126,11 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
-        waitForStart();
+//        waitForStart();
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("status", "waiting for start command...");
+            telemetry.update();
+        }
 
         if (opModeIsActive()) {
             /** Activate Tensor Flow Object Detection. */
@@ -162,22 +172,49 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                             }
                             telemetry.update();
                             break;
+                        } else if (updatedRecognitions.size() == 2) {
+                            boolean left = true;
+                            boolean middle = true;
+                            boolean right = true;
+                            for (Recognition recognition : updatedRecognitions) {
+                                telemetry.addData("Position", recognition.getLeft());
+                                if (recognition.getLeft() < 400 && recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                                    left = false;
+                                } else if (recognition.getLeft() > 600 && recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                                    middle = false;
+                                }
+                            }
+                            if (!left && !middle) {
+                                position = 2;
+                            } else if (!left && middle) {
+                                position = 1;
+                            } else {
+                                position = 0;
+                            }
+                            telemetry.update();
+                            break;
                         }
                         telemetry.update();
 
                     }
                 }
             }
-            encoderDriveByPos(-500, 1, 999);
+            encoderDriveByPos(500, 0.6, 999);
                 //move in front of the gold mineral
             if (position == 0) {
-                encoderSlideByPos(-3500, 1,999);
-                encoderDriveByPos(-3000,1,999);
+                turnByAngle(20, 0.4, 999);
+//                encoderSlideByPos(-3500, 1,999);
+                encoderDriveByPos(3000,0.6,999);
+                turnByAngle(-20, 0.4, 999);
+                encoderDriveByPos(2500, 0.6, 999);
             } else if (position == 1) {
-                encoderDriveByPos(-3000,1,999);
+                encoderDriveByPos(3000,0.6,999);
             } else if (position == 2) {
-                encoderSlideByPos(3500, 1,999);
-                encoderDriveByPos(-3000,1,999);
+                turnByAngle(-20, 0.4, 999);
+//                encoderSlideByPos(3500, 1,999);
+                encoderDriveByPos(3000,0.6,999);
+                turnByAngle(20, 0.4, 999);
+                encoderDriveByPos(2500, 0.6, 999);
             }
         }
 
@@ -225,6 +262,35 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         robot.hMotor.setPower(0);
 
         robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void turnByAngle(double angle, double speed, double timeoutS) {
+        if(angle > 0) {
+            robot.leftMotor.setPower(-speed);
+            robot.rightMotor.setPower(speed);
+            while(currentAngle < angle && opModeIsActive() && runtime.seconds() < timeoutS) {
+                updateAngle();
+                telemetry.addData("Angle: ", currentAngle);
+                telemetry.update();
+            }
+            robot.leftMotor.setPower(0);
+            robot.rightMotor.setPower(0);
+        } else {
+            robot.leftMotor.setPower(speed);
+            robot.rightMotor.setPower(-speed);
+            while (currentAngle > angle && opModeIsActive() && runtime.seconds() < timeoutS){
+                updateAngle();
+                telemetry.addData("Angle: ", currentAngle);
+                telemetry.update();
+            }
+            robot.leftMotor.setPower(0);
+            robot.rightMotor.setPower(0);
+        }
+
+    }
+
+    public void updateAngle() {
+        currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     /**

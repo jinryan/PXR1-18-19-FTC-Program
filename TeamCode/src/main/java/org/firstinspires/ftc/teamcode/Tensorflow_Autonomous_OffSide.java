@@ -131,7 +131,11 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
-        waitForStart();
+//      waitForStart();
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("status", "waiting for start command...");
+            telemetry.update();
+        }
 
         if (opModeIsActive()) {
             /** Activate Tensor Flow Object Detection. */

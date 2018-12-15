@@ -90,7 +90,11 @@ public class DriverOneControlOpmode extends OpMode
     }
 
     public void hookerDrive() {
-        robot.hooker.setPower(gamepad2.right_trigger - gamepad1.left_trigger);
+        if (robot.touch.getValue() == 1) {
+            robot.hooker.setPower(0);
+        } else {
+            robot.hooker.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+        }
     }
 
     /*
@@ -98,7 +102,9 @@ public class DriverOneControlOpmode extends OpMode
      */
     @Override
     public void init_loop() {
-
+        // If you are using Motorola E4 phones,
+        // you should send telemetry data while waiting for start.
+        telemetry.addData("status", "loop test... waiting for start");
     }
 
     /*
@@ -135,5 +141,6 @@ public class DriverOneControlOpmode extends OpMode
         telemetry.addData("Left motor encoder:", robot.leftMotor.getCurrentPosition());
         telemetry.addData("Right motor encoder:", robot.rightMotor.getCurrentPosition());
         telemetry.addData("H motor encoder:", robot.hMotor.getCurrentPosition());
+        telemetry.addData("Touch:", robot.touch.getValue());
     }
 }

@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PXR1Robot {
@@ -19,6 +20,7 @@ public class PXR1Robot {
     public DcMotor hMotor = null;
     public DcMotor hooker = null;
     public BNO055IMU imu = null;
+    public TouchSensor touch = null;
 
 
     // ======================= Parameters ==================
@@ -57,7 +59,12 @@ public class PXR1Robot {
         hMotor = hardwareMap.get(DcMotor.class, "h");
         hooker = hardwareMap.get(DcMotor.class, "hooker");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        touch = hardwareMap.get(TouchSensor.class, "touch");
         imu.initialize(parameters);
+
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hooker.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
