@@ -90,11 +90,9 @@ public class DriverOneControlOpmode extends OpMode
     }
 
     public void hookerDrive() {
-        if (robot.touch.getValue() == 1) {
-            robot.hooker.setPower(0);
-        } else {
-            robot.hooker.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
-        }
+        double x = Range.scale(robot.ods.getRawLightDetected(),0, 1.8, 1, 0);
+        double y = Range.scale(robot.ods2.getRawLightDetected(), 0, 0.71, 1, 0);
+        robot.hooker.setPower(gamepad2.right_trigger * x - gamepad2.left_trigger * y);
     }
 
     /*
@@ -141,6 +139,9 @@ public class DriverOneControlOpmode extends OpMode
         telemetry.addData("Left motor encoder:", robot.leftMotor.getCurrentPosition());
         telemetry.addData("Right motor encoder:", robot.rightMotor.getCurrentPosition());
         telemetry.addData("H motor encoder:", robot.hMotor.getCurrentPosition());
-        telemetry.addData("Touch:", robot.touch.getValue());
+        telemetry.addData("ODS:", robot.ods.getLightDetected());
+        telemetry.addData("ODS:", robot.ods.getRawLightDetected());
+        telemetry.addData("ODS2:", robot.ods2.getLightDetected());
+        telemetry.addData("ODS2:", robot.ods2.getRawLightDetected());
     }
 }
