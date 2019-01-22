@@ -50,14 +50,9 @@ public class DriverOneControlOpmode extends OpMode
 
     private void manualDrive() {
 
-        double frontPower = -gamepad1.left_stick_y;
-        double sidePower = -gamepad2.left_stick_x;
-        double hPower = -gamepad1.left_stick_x * microAdjustment;
-
-        double overridingSidePower = -gamepad1.right_stick_x;
-
-        if (Math.abs(overridingSidePower) > 0.2)
-            sidePower = overridingSidePower;
+        double frontPower = -gamepad1.right_stick_y;
+        double sidePower = -gamepad1.right_stick_x;
+        double hPower = -gamepad1.left_stick_x * microAdjustment * reverse;
 
         double leftPower = frontPower * microAdjustment * reverse - sidePower * (1+(1 - microAdjustment) * -0.6);
         double rightPower = frontPower * microAdjustment * reverse + sidePower * (1+(1 - microAdjustment) * -0.6);
@@ -92,7 +87,7 @@ public class DriverOneControlOpmode extends OpMode
     public void hookerDrive() {
         double x = Range.scale(robot.ods.getRawLightDetected(),0, 1.8, 1, 0);
         double y = Range.scale(robot.ods2.getRawLightDetected(), 0, 0.71, 1, 0);
-        robot.hooker.setPower(gamepad2.right_trigger * x - gamepad2.left_trigger * y);
+        robot.hooker.setPower(gamepad1.right_trigger * x - gamepad1.left_trigger * y);
     }
 
     /*
