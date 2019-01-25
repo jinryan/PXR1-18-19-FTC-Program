@@ -90,9 +90,24 @@ public class DriverOneControlOpmode extends OpMode
     }
 
     public void hookerDrive() {
-        double x = Range.scale(robot.ods.getRawLightDetected(),0, 1.8, 1, 0);
-        double y = Range.scale(robot.ods2.getRawLightDetected(), 0, 0.71, 1, 0);
+        double x = Range.scale(robot.ods.getRawLightDetected(),0, 1.7, 1, 0);
+        double y = Range.scale(robot.ods2.getRawLightDetected(), 0, 0.5, 1, 0);
         robot.hooker.setPower(gamepad2.right_trigger * x - gamepad2.left_trigger * y);
+    }
+
+    public void armDrive() {
+        robot.arm.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+    }
+
+    public void spoolDrive() {
+        if (gamepad1.right_bumper) {
+            robot.spool.setPower(1);
+        } else if (gamepad1.left_bumper) {
+            robot.spool.setPower(-1);
+        } else {
+            robot.spool.setPower(0);
+        }
+
     }
 
     /*
@@ -122,6 +137,8 @@ public class DriverOneControlOpmode extends OpMode
         manualDrive();
         updateReverse();
         hookerDrive();
+        armDrive();
+        spoolDrive();
         updateMotorEncoderValues();
     }
 

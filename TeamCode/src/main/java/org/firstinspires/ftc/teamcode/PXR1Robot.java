@@ -23,6 +23,8 @@ public class PXR1Robot {
     public BNO055IMU imu = null;
     public OpticalDistanceSensor ods = null;
     public OpticalDistanceSensor ods2 = null;
+    public DcMotorSimple arm = null;
+    public DcMotorSimple spool = null;
 
 
     // ======================= Parameters ==================
@@ -63,6 +65,8 @@ public class PXR1Robot {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         ods = hardwareMap.get(OpticalDistanceSensor.class, "ods");
         ods2 = hardwareMap.get(OpticalDistanceSensor.class, "ods2");
+        arm = hardwareMap.get(DcMotorSimple.class, "arm");
+        spool = hardwareMap.get(DcMotorSimple.class, "spool");
         imu.initialize(parameters);
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

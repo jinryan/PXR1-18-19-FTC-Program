@@ -134,7 +134,7 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
 
             runtime.reset();
             while (opModeIsActive() && runtime.seconds() < 5) {
-                x = Range.scale(robot.ods.getRawLightDetected(),0, 1.8, 1, 0);
+                x = Range.scale(robot.ods.getRawLightDetected(),0, 1.7, 1, 0);
                 robot.hooker.setPower(1 * x);
             }
             robot.hooker.setPower(0);
@@ -207,24 +207,24 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
                 turnByAngle(20, 0.4, 1.5);
                 encoderDriveByPos(3500,0.8,1.5);
                 encoderDriveByPos(-3500, 0.8, 1.5);
-                turnByAngle(70, 0.4, 3);
-                encoderDriveByPos(5000, 0.8, 5);
-                turnByAngle(45, 0.4, 4);
-                encoderDriveByPos(5000, 0.8, 5);
+//                turnByAngle(70, 0.4, 3);
+//                encoderDriveByPos(5000, 0.8, 5);
+//                turnByAngle(45, 0.4, 4);
+//                encoderDriveByPos(5000, 0.8, 5);
             } else if (position == 1) {
                 encoderDriveByPos(3500,0.8,1.5);
                 encoderDriveByPos(-3500, 0.8, 1.5);
-                turnByAngle(90, 0.4, 3);
-                encoderDriveByPos(5000, 0.8, 5);
+//                turnByAngle(90, 0.4, 3);
+//                encoderDriveByPos(5000, 0.8, 5);
 
             } else if (position == 2) {
                 turnByAngle(-20, 0.4, 1.5);
                 encoderDriveByPos(3500,0.8,1.5);
                 encoderDriveByPos(-3500, 0.8, 1.5);
-                turnByAngle(110, 0.4, 4);
-                encoderDriveByPos(5000, 0.8, 5);
-                turnByAngle(45, 0.4, 4);
-                encoderDriveByPos(5000, 0.8, 5);
+//                turnByAngle(110, 0.4, 4);
+//                encoderDriveByPos(5000, 0.8, 5);
+//                turnByAngle(45, 0.4, 4);
+//                encoderDriveByPos(5000, 0.8, 5);
 
             }
             encoderDriveByPos(200,1,999);

@@ -136,12 +136,14 @@ public class Tensorflow_Autonomous extends LinearOpMode {
             //drop from hanging
             runtime.reset();
             while (opModeIsActive() && runtime.seconds() < 5) {
-                x = Range.scale(robot.ods.getRawLightDetected(),0, 1.8, 1, 0);
+                x = Range.scale(robot.ods.getRawLightDetected(),0, 1.7, 1, 0);
                 robot.hooker.setPower(1 * x);
             }
             robot.hooker.setPower(0);
-            encoderSlideByPos(1000, 1, 999);
-
+            encoderSlideByPos(500, 1, 2);
+//            turnByAngle(-20, 0.36, 5);
+//            encoderDriveByPos(300, 1, 5);
+//            turnByAngle(20, 0.35, 5);
             //detect gold mineral
             while (opModeIsActive()) {
                 if (tfod != null) {
@@ -210,14 +212,14 @@ public class Tensorflow_Autonomous extends LinearOpMode {
             if (position == 0) {
                 turnByAngle(20, 0.4, 1.5);
                 encoderDriveByPos(3500,0.8,1.5);
-                turnByAngle(-20, 0.4, 1.5);
+                turnByAngle(-15, 0.4, 1.5);
                 encoderDriveByPos(2500, 0.8, 1.5);
             } else if (position == 1) {
                 encoderDriveByPos(5000,0.8,1.5);
             } else if (position == 2) {
                 turnByAngle(-20, 0.4, 1.5);
                 encoderDriveByPos(3500,0.8,1.5);
-                turnByAngle(20, 0.4, 1.5);
+                turnByAngle(15, 0.4, 1.5);
                 encoderDriveByPos(2500, 0.8, 1.5);
             }
 
