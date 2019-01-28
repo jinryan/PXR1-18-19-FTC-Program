@@ -133,12 +133,12 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
             }
 
             runtime.reset();
-            while (opModeIsActive() && runtime.seconds() < 5) {
+            while (opModeIsActive() && runtime.seconds() < 5.5) {
                 x = Range.scale(robot.ods.getRawLightDetected(),0, 1.7, 1, 0);
                 robot.hooker.setPower(1 * x);
             }
             robot.hooker.setPower(0);
-            encoderSlideByPos(1000, 1, 999);
+            encoderSlideByPos(1000, 1, 3);
 
             while (opModeIsActive()) {
                 if (tfod != null) {
@@ -201,33 +201,32 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
                 }
             }
 
-            encoderDriveByPos(-500, 1, 999);
+            encoderDriveByPos(500, 0.6, 1.5);
                 //move in front of the gold mineral
             if (position == 0) {
-                turnByAngle(20, 0.4, 1.5);
-                encoderDriveByPos(3500,0.8,1.5);
-                encoderDriveByPos(-3500, 0.8, 1.5);
+                turnByAngle(20, 0.4, 3);
+                encoderDriveByPos(3500,0.8,3);
+                encoderDriveByPos(-3500, 0.8, 3);
 //                turnByAngle(70, 0.4, 3);
 //                encoderDriveByPos(5000, 0.8, 5);
 //                turnByAngle(45, 0.4, 4);
 //                encoderDriveByPos(5000, 0.8, 5);
             } else if (position == 1) {
-                encoderDriveByPos(3500,0.8,1.5);
-                encoderDriveByPos(-3500, 0.8, 1.5);
+                encoderDriveByPos(3500,0.8,3);
+                encoderDriveByPos(-3500, 0.8, 3);
 //                turnByAngle(90, 0.4, 3);
 //                encoderDriveByPos(5000, 0.8, 5);
 
             } else if (position == 2) {
-                turnByAngle(-20, 0.4, 1.5);
-                encoderDriveByPos(3500,0.8,1.5);
-                encoderDriveByPos(-3500, 0.8, 1.5);
+                turnByAngle(-20, 0.4, 3);
+                encoderDriveByPos(3500,0.8,3);
+                encoderDriveByPos(-3500, 0.8, 3);
 //                turnByAngle(110, 0.4, 4);
 //                encoderDriveByPos(5000, 0.8, 5);
 //                turnByAngle(45, 0.4, 4);
 //                encoderDriveByPos(5000, 0.8, 5);
 
             }
-            encoderDriveByPos(200,1,999);
         }
 
         if (tfod != null) {

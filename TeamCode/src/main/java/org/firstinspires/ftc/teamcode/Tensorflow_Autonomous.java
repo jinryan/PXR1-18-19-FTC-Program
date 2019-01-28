@@ -97,6 +97,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
      */
     private VuforiaLocalizer vuforia;
 
+
     /**
      * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
      * Detection engine.
@@ -135,12 +136,12 @@ public class Tensorflow_Autonomous extends LinearOpMode {
 
             //drop from hanging
             runtime.reset();
-            while (opModeIsActive() && runtime.seconds() < 5) {
+            while (opModeIsActive() && runtime.seconds() < 5.5) {
                 x = Range.scale(robot.ods.getRawLightDetected(),0, 1.7, 1, 0);
                 robot.hooker.setPower(1 * x);
             }
             robot.hooker.setPower(0);
-            encoderSlideByPos(500, 1, 2);
+            encoderSlideByPos(500, 1, 3);
 //            turnByAngle(-20, 0.36, 5);
 //            encoderDriveByPos(300, 1, 5);
 //            turnByAngle(20, 0.35, 5);
@@ -208,22 +209,26 @@ public class Tensorflow_Autonomous extends LinearOpMode {
 
             //knock gold mineral
             encoderDriveByPos(500, 0.6, 1.5);
-//
-            if (position == 0) {
-                turnByAngle(20, 0.4, 1.5);
-                encoderDriveByPos(3500,0.8,1.5);
-                turnByAngle(-15, 0.4, 1.5);
-                encoderDriveByPos(2500, 0.8, 1.5);
-            } else if (position == 1) {
-                encoderDriveByPos(5000,0.8,1.5);
-            } else if (position == 2) {
-                turnByAngle(-20, 0.4, 1.5);
-                encoderDriveByPos(3500,0.8,1.5);
-                turnByAngle(15, 0.4, 1.5);
-                encoderDriveByPos(2500, 0.8, 1.5);
-            }
 
-            //place team marker
+            if (position == 0) {
+                turnByAngle(20, 0.4, 3);
+                encoderDriveByPos(3500,0.8,3);
+                turnByAngle(-15, 0.4, 3);
+                encoderDriveByPos(4000, 0.8, 3);
+                robot.markerGate.setPosition(1);
+                encoderDriveByPos(-3000,1,3);
+            } else if (position == 1) {
+                encoderDriveByPos(7000,0.8,3);
+                robot.markerGate.setPosition(1);
+                encoderDriveByPos(-3000,1,3);
+            } else if (position == 2) {
+                turnByAngle(-20, 0.4, 3);
+                encoderDriveByPos(3500,0.8,3);
+                turnByAngle(15, 0.4, 3);
+                encoderDriveByPos(4000, 0.8, 3);
+                robot.markerGate.setPosition(1);
+                encoderDriveByPos(-3000,1,3);
+            }
         }
 
         if (tfod != null) {
@@ -322,6 +327,8 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
+
+
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
     }
 
@@ -332,7 +339,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.7;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }

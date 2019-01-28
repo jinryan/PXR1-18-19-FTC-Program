@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PXR1Robot {
@@ -20,11 +21,15 @@ public class PXR1Robot {
     public DcMotor rightMotor = null;
     public DcMotor hMotor = null;
     public DcMotor hooker = null;
-    public BNO055IMU imu = null;
-    public OpticalDistanceSensor ods = null;
-    public OpticalDistanceSensor ods2 = null;
     public DcMotorSimple arm = null;
     public DcMotorSimple spool = null;
+
+    public BNO055IMU imu = null;
+
+    public OpticalDistanceSensor ods = null;
+    public OpticalDistanceSensor ods2 = null;
+
+    public Servo markerGate = null;
 
 
     // ======================= Parameters ==================
@@ -67,6 +72,7 @@ public class PXR1Robot {
         ods2 = hardwareMap.get(OpticalDistanceSensor.class, "ods2");
         arm = hardwareMap.get(DcMotorSimple.class, "arm");
         spool = hardwareMap.get(DcMotorSimple.class, "spool");
+        markerGate = hardwareMap.get(Servo.class, "mgate");
         imu.initialize(parameters);
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -81,6 +87,7 @@ public class PXR1Robot {
 //        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        markerGate.setPosition(0);
     }
 
     void fit18() {
@@ -111,7 +118,7 @@ public class PXR1Robot {
     }
 
     public void drive(double speedLeft, double speedRight, double speedH) {
-        leftMotor.setPower(speedLeft * rightSpeedToLeftRatio);
+        leftMotor.setPower(speedLeft);
         rightMotor.setPower(speedRight);
         hMotor.setPower(speedH);
     }
