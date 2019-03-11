@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -30,18 +31,16 @@ public class PXR1Robot {
     public OpticalDistanceSensor ods2 = null;
 
     public Servo markerGate = null;
-
+    public Servo mineralGate = null;
+    public CRServo mineralSweeper = null;
 
     // ======================= Parameters ==================
-
-    public double rightSpeedToLeftRatio = 0.9;
-
-    // Claw parameters
-
+    public double kp = 0.02;
+    public double ki = 0.00003;
+    public double kd = 0.004;
 
     /* local OpMode members. */
     HardwareMap hardwareMap           =  null;
-
 
     /* Constructor */
 
@@ -73,21 +72,26 @@ public class PXR1Robot {
         arm = hardwareMap.get(DcMotorSimple.class, "arm");
         spool = hardwareMap.get(DcMotorSimple.class, "spool");
         markerGate = hardwareMap.get(Servo.class, "mgate");
+        mineralGate = hardwareMap.get(Servo.class, "mineralgate");
+        mineralSweeper = hardwareMap.get(CRServo.class, "mineralsweeper");
         imu.initialize(parameters);
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hooker.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         hooker.setDirection(DcMotorSimple.Direction.REVERSE);
         hooker.setDirection(DcMotorSimple.Direction.REVERSE);
+        spool.setDirection(DcMotorSimple.Direction.REVERSE);
+        mineralSweeper.setDirection(DcMotorSimple.Direction.REVERSE);
 //        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        markerGate.setPosition(0);
+        markerGate.setPosition(0.94);
     }
 
     void fit18() {
@@ -104,8 +108,6 @@ public class PXR1Robot {
 
         leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
 
         drive(leftPower, rightPower, 0);
         while (leftMotor.isBusy() && rightMotor.isBusy()) {}

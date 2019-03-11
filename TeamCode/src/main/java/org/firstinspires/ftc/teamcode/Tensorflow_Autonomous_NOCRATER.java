@@ -56,9 +56,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Autonomous: TensorFlow", group = "Autonomous")
+@Autonomous(name = "Autonomous: TensorFlow NO CRATER", group = "Autonomous")
 //@Disabled
-public class Tensorflow_Autonomous extends LinearOpMode {
+public class Tensorflow_Autonomous_NOCRATER extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -73,18 +73,13 @@ public class Tensorflow_Autonomous extends LinearOpMode {
 
     private boolean trigger = true;
 
+    static final double     COUNTS_PER_MOTOR_REV    = 1680;
+    static final double     DRIVE_GEAR_REDUCTION    = 0.667;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+
     private double currentAngle = 0;
     private double x = 0;
-
-    double previousTime = 0.0;
-    double currentTime = 0.0;
-    double elapsedTime = 0.0;
-    double currentError = 0.0;
-    double previousError = 0.0;
-    double proportional = 0.0;
-    double derivative = 0.0;
-    double integral = 0.0;
-    double PID = 0.0;
 
     PXR1Robot robot = new PXR1Robot();
 
@@ -141,6 +136,10 @@ public class Tensorflow_Autonomous extends LinearOpMode {
 
         if (opModeIsActive()) {
             /** Activate Tensor Flow Object Detection. */
+            if (tfod != null) {
+                tfod.activate();
+            }
+
             //drop from hanging
             runtime.reset();
             while (opModeIsActive() && runtime.seconds() < 5.5) {
@@ -149,14 +148,12 @@ public class Tensorflow_Autonomous extends LinearOpMode {
             }
             robot.hooker.setPower(0);
             encoderSlideByPos(600, 1, 3);
+//            turnByAngle(-20, 0.36, 5);
+//            encoderDriveByPos(300, 1, 5);
+//            turnByAngle(20, 0.35, 5);
             //detect gold mineral
-
-            if (tfod != null) {
-                tfod.activate();
-            }
-
             runtime.reset();
-            while (opModeIsActive() && positions[positions.length - 1] == -1 && runtime.seconds() < 4) {
+            while (opModeIsActive() && positions[positions.length - 1] == -1 && runtime.seconds() < 2) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -205,6 +202,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                             telemetry.update();
                         }
                         telemetry.update();
+
                     }
                 }
                 if (counter == positions.length - 1 && position != -1) {
@@ -241,41 +239,30 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                 position = 1;
             }
 
-            if (position == 0) {//left`
-                turnByPID(25, 1.5);
-                encoderDriveByPos(3500,0.8,3);
-                turnByPID(-45, 2.5);
-                encoderDriveByPos(3500, 0.8, 3);
+            if (position == 0) {//left
+                turnByAngle(22, 0.4, 3);
+                encoderDriveByPos(3500,0.6,3);
+                turnByAngle(-44, 0.4, 3);
+                encoderDriveByPos(3500, 0.6, 3);
                 robot.markerGate.setPosition(0.5);
                 runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < 1.5) {}
-                encoderDriveByPos(-1000,1,1);
-                encoderSlideByPos(2000,1,3);
-                encoderSlideByPos( -200,1,1);
-                encoderDriveByPos(-16000,0.6,10);
+                while (opModeIsActive() && runtime.seconds() < 2) {}
+                encoderDriveByPos(-1000,0.6,3);
             } else if (position == 1) {//middle
-                encoderDriveByPos(6900,0.6,3);
+                encoderDriveByPos(7000,0.8,3);
                 robot.markerGate.setPosition(0.5);
                 runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < 1.5) {}
-                turnByPID(-45,2.5);
-                encoderSlideByPos(2000,1,3);
-                encoderSlideByPos(-150,1,2);
-                encoderDriveByPos(-10000,0.6,10);
+                while (opModeIsActive() && runtime.seconds() < 2) {}
+                encoderDriveByPos(-1000,0.6,10);
             } else if (position == 2) {//right
-                turnByPID(-33,2);
-                encoderDriveByPos(3500,1,3);
-                turnByPID(33,2);
-                encoderDriveByPos(4000, 1, 3);
+                turnByAngle(-25, 0.4, 3);
+                encoderDriveByPos(3500,0.6,3);
+                turnByAngle(56, 0.4, 3);
+                encoderDriveByPos(4000, 0.6, 3);
                 robot.markerGate.setPosition(0.5);
                 runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < 1.5) {}
-                encoderDriveByPos(-500,1,1);
-                turnByPID(-45,2);
-                encoderDriveByPos(-1000,1,1);
-                encoderSlideByPos(2000,1,3);
-                encoderSlideByPos( -200,1,1);
-                encoderDriveByPos(-16000,0.6,10);
+                while (opModeIsActive() && runtime.seconds() < 2) {}
+                encoderDriveByPos(-1000,0.6,3);
             }
 
 
@@ -333,40 +320,6 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void turnByPID(double targetAngle, double timeoutS) {
-        runtime.reset();
-        while (runtime.seconds() < timeoutS) {
-            updateAngle();
-            currentError = currentAngle - targetAngle;
-            PID = calculatePID(currentError, previousError, robot.kp, robot.kd, robot.ki, 1);
-            robot.rightMotor.setPower(PID);
-            robot.leftMotor.setPower(-PID);
-            previousError = currentError;
-            telemetry.addData("angle:", currentAngle);
-            telemetry.addData("target:", targetAngle);
-            telemetry.addData("power:", PID);
-            telemetry.update();
-        }
-        currentError = 0;
-        previousError = 0;
-        robot.rightMotor.setPower(0);
-        robot.leftMotor.setPower(0);
-    }
-
-    public double calculatePID(double error, double previousError, double kp, double kd, double ki, double range)  {
-        previousTime = currentTime;
-        currentTime = runtime.milliseconds();
-        elapsedTime = (currentTime - previousTime) / 1000;
-        proportional = error * kp;
-        integral = integral + (error * ki);
-        derivative = kd * ((error - previousError) / elapsedTime);
-        PID = proportional + integral + derivative;
-        PID = -Range.clip(PID, -range, range);
-        telemetry.addData("power:", PID);
-        telemetry.update();
-        return PID;
-    }
-
     public void turnByAngle(double angle, double speed, double timeoutS) {
         runtime.reset();
         updateAngle();
@@ -393,8 +346,6 @@ public class Tensorflow_Autonomous extends LinearOpMode {
             robot.rightMotor.setPower(0);
         }
     }
-
-
 
     public void updateAngle() {
         currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
@@ -434,7 +385,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.6;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }

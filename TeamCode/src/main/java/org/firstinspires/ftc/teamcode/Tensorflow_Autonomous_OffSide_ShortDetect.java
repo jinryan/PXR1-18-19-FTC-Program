@@ -56,9 +56,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Autonomous: TensorFlow", group = "Autonomous")
+@Autonomous(name = "Autonomous: TensorFlow Offside short", group = "Autonomous")
 //@Disabled
-public class Tensorflow_Autonomous extends LinearOpMode {
+public class Tensorflow_Autonomous_OffSide_ShortDetect extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -66,15 +66,10 @@ public class Tensorflow_Autonomous extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private int position = -1;
-    private int counter = 0;
-    private int[] positions = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-
-    private double angletemp = 0;
-
-    private boolean trigger = true;
 
     private double currentAngle = 0;
     private double x = 0;
+    private double angletemp = 0;
 
     double previousTime = 0.0;
     double currentTime = 0.0;
@@ -85,6 +80,11 @@ public class Tensorflow_Autonomous extends LinearOpMode {
     double derivative = 0.0;
     double integral = 0.0;
     double PID = 0.0;
+
+    static final double     COUNTS_PER_MOTOR_REV    = 1680;
+    static final double     DRIVE_GEAR_REDUCTION    = 0.667;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
     PXR1Robot robot = new PXR1Robot();
 
@@ -107,7 +107,6 @@ public class Tensorflow_Autonomous extends LinearOpMode {
      * localization engine.
      */
     private VuforiaLocalizer vuforia;
-
 
     /**
      * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
@@ -133,30 +132,29 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
-//        waitForStart();
+//      waitForStart();
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("status", "waiting for start command...");
             telemetry.update();
         }
 
+        //lower from lander
         if (opModeIsActive()) {
-            /** Activate Tensor Flow Object Detection. */
-            //drop from hanging
             runtime.reset();
-            while (opModeIsActive() && runtime.seconds() < 5.5) {
+            while (opModeIsActive() && runtime.seconds() < 4.5) {
                 x = Range.scale(robot.ods.getRawLightDetected(),0, 2.744, 1, 0);
                 robot.hooker.setPower(1 * x);
             }
             robot.hooker.setPower(0);
             encoderSlideByPos(600, 1, 3);
-            //detect gold mineral
 
+            /** Activate Tensor Flow Object Detection. */
             if (tfod != null) {
                 tfod.activate();
             }
 
-            runtime.reset();
-            while (opModeIsActive() && positions[positions.length - 1] == -1 && runtime.seconds() < 4) {
+            //detect gold mineral
+            while (opModeIsActive() && runtime.seconds() < 4 && position == -1) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -207,78 +205,41 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                         telemetry.update();
                     }
                 }
-                if (counter == positions.length - 1 && position != -1) {
-                    positions[counter] = position;
-                    for (int i = 1; i < positions.length; i++) {
-                        if (positions[i - 1] != positions[i]) {
-                            positions = resetArray(positions);
-                            trigger = false;
-                            break;
-                        }
-                    }
-                    if (trigger) {
-                        break;
-                    } else {
-                        trigger = true;
-                        position = -1;
-                        counter = 0;
-                    }
-
-                }else if (position != -1) {
-                    positions[counter] = position;
-                    position = -1;
-                    counter++;
-                }
             }
 
-            telemetry.addData("Position", position);
-            telemetry.update();
-
-            //knock gold mineral
-            encoderDriveByPos(500, 0.6, 1.5);
+            //move in front of the gold mineral
+            encoderDriveByPos(500, 0.8, 1.5);
 
             if (position == -1) {
                 position = 1;
             }
 
-            if (position == 0) {//left`
-                turnByPID(25, 1.5);
+            if (position == 0) {//left
+                turnByPID(28, 1.5);
+                encoderDriveByPos(2800,1,3);
+                encoderDriveByPos(-1500, 1, 3);
+                turnByPID(90,3);
                 encoderDriveByPos(3500,0.8,3);
-                turnByPID(-45, 2.5);
-                encoderDriveByPos(3500, 0.8, 3);
-                robot.markerGate.setPosition(0.5);
-                runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < 1.5) {}
-                encoderDriveByPos(-1000,1,1);
-                encoderSlideByPos(2000,1,3);
-                encoderSlideByPos( -200,1,1);
-                encoderDriveByPos(-16000,0.6,10);
             } else if (position == 1) {//middle
-                encoderDriveByPos(6900,0.6,3);
-                robot.markerGate.setPosition(0.5);
-                runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < 1.5) {}
-                turnByPID(-45,2.5);
-                encoderSlideByPos(2000,1,3);
-                encoderSlideByPos(-150,1,2);
-                encoderDriveByPos(-10000,0.6,10);
+                encoderDriveByPos(2800,1,3);
+                encoderDriveByPos(-1300,1,3);
+                turnByPID(90,3);
+                encoderDriveByPos(4000,0.8,3);
             } else if (position == 2) {//right
-                turnByPID(-33,2);
-                encoderDriveByPos(3500,1,3);
-                turnByPID(33,2);
-                encoderDriveByPos(4000, 1, 3);
-                robot.markerGate.setPosition(0.5);
-                runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < 1.5) {}
-                encoderDriveByPos(-500,1,1);
-                turnByPID(-45,2);
-                encoderDriveByPos(-1000,1,1);
-                encoderSlideByPos(2000,1,3);
-                encoderSlideByPos( -200,1,1);
-                encoderDriveByPos(-16000,0.6,10);
+                turnByPID(-37,1.5);
+                encoderDriveByPos(2800,1,3);
+                encoderDriveByPos(-1500,1,3);
+                turnByPID(90,3);
+                encoderDriveByPos(4500,0.8,3);
             }
-
-
+            turnByPID(135,1.5);
+            encoderSlideByPos(-2400, 1, 3);
+            encoderSlideByPos(200,1,1);
+            encoderDriveByPos( 4600,1,4);
+            robot.markerGate.setPosition(0.5);
+            runtime.reset();
+            while (runtime.seconds() < 1.5) {}
+            encoderDriveByPos(-15000,1,4);
         }
 
         if (tfod != null) {
@@ -367,34 +328,6 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         return PID;
     }
 
-    public void turnByAngle(double angle, double speed, double timeoutS) {
-        runtime.reset();
-        updateAngle();
-        angletemp = currentAngle;
-        if (angle > 0) {
-            robot.leftMotor.setPower(-speed);
-            robot.rightMotor.setPower(speed);
-            while (currentAngle < angletemp + angle && opModeIsActive() && runtime.seconds() < timeoutS) {
-                updateAngle();
-                telemetry.addData("Angle: ", currentAngle);
-                telemetry.update();
-            }
-            robot.leftMotor.setPower(0);
-            robot.rightMotor.setPower(0);
-        } else {
-            robot.leftMotor.setPower(speed);
-            robot.rightMotor.setPower(-speed);
-            while (currentAngle > angletemp + angle && opModeIsActive() && runtime.seconds() < timeoutS){
-                updateAngle();
-                telemetry.addData("Angle: ", currentAngle);
-                telemetry.update();
-            }
-            robot.leftMotor.setPower(0);
-            robot.rightMotor.setPower(0);
-        }
-    }
-
-
 
     public void updateAngle() {
         currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
@@ -422,8 +355,6 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-
-
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
     }
 
@@ -434,7 +365,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.7;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }

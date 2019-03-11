@@ -19,16 +19,18 @@ public class DriverOneControlOpmode extends OpMode
 
     private double microAdjustment = 1;
     private int reverse = 1;
+    private double clawOffset = 0.45;
+    private double gatePosition = 0;
+    private double CLAW_SPEED = 0.05;
 
     Button leftBumper = new Button();
     Button rightBumper = new Button();
     Button aButton = new Button();
     Button yButton = new Button();
+    Button xButton = new Button();
+    Button bButton = new Button();
     Button upButton = new Button();
     Button downButton = new Button();
-
-
-
 
     // Microadjustment
     public void updateMicroadjust() {
@@ -85,13 +87,14 @@ public class DriverOneControlOpmode extends OpMode
     }
 
     public void hookerDrive() {
-        double x = Range.scale(robot.ods.getRawLightDetected(),0, 1.7, 1, 0);
+        double x = Range.scale(robot.ods.getRawLightDetected(),0, 2.744, 1, 0);
         double y = Range.scale(robot.ods2.getRawLightDetected(), 0, 0.71, 1, 0);
         robot.hooker.setPower(gamepad2.right_trigger * x - gamepad2.left_trigger * y);
     }
 
     public void armDrive() {
         robot.arm.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+
     }
 
     public void spoolDrive() {
@@ -100,8 +103,34 @@ public class DriverOneControlOpmode extends OpMode
         } else if (gamepad1.left_bumper) {
             robot.spool.setPower(-1);
         } else {
-            robot.spool.setPower(0);
+            robot.spool.setPower(gamepad1.right_trigger * 0.6 - gamepad1.left_trigger * 0.6);
         }
+    }
+
+    public void servoGate() {
+        if (gamepad2.right_bumper)
+            clawOffset += CLAW_SPEED;
+        else if (gamepad2.left_bumper)
+            clawOffset -= CLAW_SPEED;
+
+        // Move both servos to new position.  Assume servos are mirror image of each other.
+        clawOffset = Range.clip(clawOffset, -0.5, 0.5);
+        robot.markerGate.setPosition(0.5 + clawOffset);
+    }
+
+    public void mineralGate() {
+        if (gamepad1.dpad_right)
+            gatePosition += CLAW_SPEED;
+        else if (gamepad1.dpad_left)
+            gatePosition -= CLAW_SPEED;
+
+        // Move both servos to new position.  Assume servos are mirror image of each other.
+        gatePosition = Range.clip(gatePosition, 0, 1);
+        robot.mineralGate.setPosition(gatePosition);
+    }
+
+    public void sweeperDrive() {
+        robot.mineralSweeper.setPower(gamepad1.left_stick_y);
     }
 
     /*
@@ -133,6 +162,9 @@ public class DriverOneControlOpmode extends OpMode
         hookerDrive();
         armDrive();
         spoolDrive();
+        servoGate();
+        sweeperDrive();
+        mineralGate();
         updateMotorEncoderValues();
     }
 
@@ -146,13 +178,21 @@ public class DriverOneControlOpmode extends OpMode
 
     private void updateMotorEncoderValues() {
         double currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double x = robot.imu.getPosition().x;
+        double y = robot.imu.getPosition().y;
+        double z = robot.imu.getPosition().z;
         telemetry.addData("Angle: ", currentAngle);
+        telemetry.addLine()
+            .addData("Position x", x)
+            .addData("Position y", y)
+            .addData("Position z", z);
         telemetry.addData("Left motor encoder:", robot.leftMotor.getCurrentPosition());
         telemetry.addData("Right motor encoder:", robot.rightMotor.getCurrentPosition());
         telemetry.addData("H motor encoder:", robot.hMotor.getCurrentPosition());
-        telemetry.addData("ODS:", robot.ods.getLightDetected());
-        telemetry.addData("ODS:", robot.ods.getRawLightDetected());
-        telemetry.addData("ODS2:", robot.ods2.getLightDetected());
-        telemetry.addData("ODS2:", robot.ods2.getRawLightDetected());
+        telemetry.addData("Servo position", robot.markerGate.getPosition());
+        telemetry.addData("MineralGate position", robot.mineralGate.getPosition());
+        telemetry.addData("Sweeper power", robot.mineralSweeper.getPower());
+        telemetry.addData("ODS raw:", robot.ods.getRawLightDetected());
+        telemetry.addData("ODS2 raw:", robot.ods2.getRawLightDetected());
     }
 }
