@@ -108,7 +108,7 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
 
 //        encoderDriveByPos(15000,0.6,10);
 //        turnByPID(30, 2);
-        turnByPID(30,3);
+        driveByPID(10000,0.8,10);
         runtime.reset();
         while (runtime.seconds() < 10 && opModeIsActive()) {
             telemetry.addLine()
@@ -175,14 +175,13 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() < timeoutS && robot.leftMotor.isBusy() && robot.rightMotor.isBusy()) {
             currentError = currentAngle - angletemp;
-            PID = calculatePID(currentError, previousError, 0.007, 0, 0, 0.2);
+            PID = calculatePID(currentError, previousError, 0.03, 0.001, 0, 0.2);
             previousError = currentError;
             robot.rightMotor.setPower(speed + PID);
-            robot.leftMotor.setPower(speed + PID);
+            robot.leftMotor.setPower(speed - PID);
             updateAngle();
-            telemetry.addData("angle:", currentAngle);
-            telemetry.addData("target:", angletemp);
-            telemetry.addData("power:", PID);
+            telemetry.addData("angle error:", currentError);
+            telemetry.addData("PID:", PID);
             telemetry.update();
         }
         currentError = 0;

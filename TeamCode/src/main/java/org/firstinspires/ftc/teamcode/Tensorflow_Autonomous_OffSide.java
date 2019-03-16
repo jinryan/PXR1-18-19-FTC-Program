@@ -158,7 +158,7 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
             }
 
             //detect gold mineral
-            while (opModeIsActive() && positions[positions.length - 1] == -1 && runtime.seconds() < 4) {
+            while (opModeIsActive() && runtime.seconds() < 4 && position == -1) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -209,28 +209,6 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
                         telemetry.update();
                     }
                 }
-                if (counter == positions.length - 1 && position != -1) {
-                    positions[counter] = position;
-                    for (int i = 1; i < positions.length; i++) {
-                        if (positions[i - 1] != positions[i]) {
-                            positions = resetArray(positions);
-                            trigger = false;
-                            break;
-                        }
-                    }
-                    if (trigger) {
-                        break;
-                    } else {
-                        trigger = true;
-                        position = -1;
-                        counter = 0;
-                    }
-
-                }else if (position != -1) {
-                    positions[counter] = position;
-                    position = -1;
-                    counter++;
-                }
             }
 
             //move in front of the gold mineral
@@ -265,7 +243,7 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
             robot.markerGate.setPosition(0.5);
             runtime.reset();
             while (runtime.seconds() < 1.5) {}
-            encoderDriveByPos(-15000,1,4);
+            driveByPID(-15000,0.8,4);
         }
 
         if (tfod != null) {
@@ -298,6 +276,40 @@ public class Tensorflow_Autonomous_OffSide extends LinearOpMode {
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void driveByPID(int pos, double speed, double timeoutS) {
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newLeftTarget = robot.leftMotor.getCurrentPosition() + pos;
+        int newRightTarget = robot.rightMotor.getCurrentPosition() + pos;
+        robot.leftMotor.setTargetPosition(newLeftTarget);
+        robot.rightMotor.setTargetPosition(newRightTarget);
+
+        robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        updateAngle();
+        angletemp = currentAngle;
+        currentTime = runtime.milliseconds();
+
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < timeoutS && robot.leftMotor.isBusy() && robot.rightMotor.isBusy()) {
+            currentError = currentAngle - angletemp;
+            PID = calculatePID(currentError, previousError, 0.03, 0.001, 0, 0.2);
+            previousError = currentError;
+            robot.rightMotor.setPower(speed - PID);
+            robot.leftMotor.setPower(speed + PID);
+            updateAngle();
+            telemetry.addData("angle error:", currentError);
+            telemetry.addData("PID:", PID);
+            telemetry.update();
+        }
+        currentError = 0;
+        previousError = 0;
+        robot.rightMotor.setPower(0);
+        robot.leftMotor.setPower(0);
     }
 
     public void encoderSlideByPos(int pos, double speed, double timeoutS) {

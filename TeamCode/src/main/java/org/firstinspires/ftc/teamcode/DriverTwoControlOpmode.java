@@ -10,9 +10,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-@TeleOp(name="Single Driver Opmode", group="TeleOp")
+@TeleOp(name="Two Drivers Opmode", group="TeleOp")
 
-public class DriverOneControlOpmode extends OpMode
+public class DriverTwoControlOpmode extends OpMode
 {
     private PXR1Robot robot = null;
     ElapsedTime runTime = null;
@@ -89,7 +89,12 @@ public class DriverOneControlOpmode extends OpMode
     public void hookerDrive() {
         double x = Range.scale(robot.ods.getRawLightDetected(),0, 2.744, 1, 0);
         double y = Range.scale(robot.ods2.getRawLightDetected(), 0, 0.71, 1, 0);
-        robot.hooker.setPower(gamepad2.right_trigger * x - gamepad2.left_trigger * y);
+        if (-gamepad2.left_stick_y > 0) {
+            robot.hooker.setPower(-gamepad2.left_stick_y * x); // need test n see if gamepad2.y is negative
+        } else {
+            robot.hooker.setPower(-gamepad2.left_stick_y * y); // need test n see if gamepad2.y is negative
+        }
+
     }
 
     public void armDrive() {
@@ -108,6 +113,10 @@ public class DriverOneControlOpmode extends OpMode
     }
 
     public void servoGate() {
+
+    }
+
+    public void mineralGate() {
         if (gamepad2.right_bumper)
             clawOffset += CLAW_SPEED;
         else if (gamepad2.left_bumper)
@@ -115,22 +124,19 @@ public class DriverOneControlOpmode extends OpMode
 
         // Move both servos to new position.  Assume servos are mirror image of each other.
         clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-        robot.markerGate.setPosition(0.5 + clawOffset);
-    }
-
-    public void mineralGate() {
-        if (gamepad1.dpad_right)
-            gatePosition += CLAW_SPEED;
-        else if (gamepad1.dpad_left)
-            gatePosition -= CLAW_SPEED;
-
-        // Move both servos to new position.  Assume servos are mirror image of each other.
-        gatePosition = Range.clip(gatePosition, 0, 1);
-        robot.mineralGate.setPosition(gatePosition);
+        robot.mineralGate.setPosition(0.5 + clawOffset);
     }
 
     public void sweeperDrive() {
-        robot.mineralSweeper.setPower(gamepad1.left_stick_y);
+        if (gamepad2.right_trigger > 0.2) {
+            robot.mineralSweeper.setPower(gamepad2.right_trigger);
+        } else if (gamepad2.left_trigger > 0.2) {
+            robot.mineralSweeper.setPower(-gamepad2.left_trigger);
+        } else {
+            robot.mineralSweeper.setPower(0);
+        }
+
+
     }
 
     /*

@@ -156,7 +156,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
             }
 
             runtime.reset();
-            while (opModeIsActive() && positions[positions.length - 1] == -1 && runtime.seconds() < 4) {
+            while (opModeIsActive() && runtime.seconds() < 4 && position == -1) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -177,57 +177,9 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                             }
                             telemetry.addData("position", position);
                             telemetry.update();
-                        } else if (updatedRecognitions.size() == 3) {
-                            int goldMineralX = -1;
-                            int silverMineral1X = -1;
-                            int silverMineral2X = -1;
-                            for (Recognition recognition : updatedRecognitions) {
-                                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                    goldMineralX = (int) recognition.getLeft();
-                                } else if (silverMineral1X == -1) {
-                                    silverMineral1X = (int) recognition.getLeft();
-                                } else {
-                                    silverMineral2X = (int) recognition.getLeft();
-                                }
-                            }
-                            if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                                if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                                    telemetry.addData("Gold Mineral Position", "Left");
-                                    position = 0;
-                                } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                                    telemetry.addData("Gold Mineral Position", "Right");
-                                    position = 2;
-                                } else {
-                                    telemetry.addData("Gold Mineral Position", "Center");
-                                    position = 1;
-                                }
-                            }
-                            telemetry.update();
                         }
                         telemetry.update();
                     }
-                }
-                if (counter == positions.length - 1 && position != -1) {
-                    positions[counter] = position;
-                    for (int i = 1; i < positions.length; i++) {
-                        if (positions[i - 1] != positions[i]) {
-                            positions = resetArray(positions);
-                            trigger = false;
-                            break;
-                        }
-                    }
-                    if (trigger) {
-                        break;
-                    } else {
-                        trigger = true;
-                        position = -1;
-                        counter = 0;
-                    }
-
-                }else if (position != -1) {
-                    positions[counter] = position;
-                    position = -1;
-                    counter++;
                 }
             }
 
@@ -243,7 +195,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
 
             if (position == 0) {//left`
                 turnByPID(25, 1.5);
-                encoderDriveByPos(3500,0.8,3);
+                encoderDriveByPos(4000,0.8,3);
                 turnByPID(-45, 2.5);
                 encoderDriveByPos(3500, 0.8, 3);
                 robot.markerGate.setPosition(0.5);
@@ -252,7 +204,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                 encoderDriveByPos(-1000,1,1);
                 encoderSlideByPos(2000,1,3);
                 encoderSlideByPos( -200,1,1);
-                encoderDriveByPos(-16000,0.6,10);
+                driveByPID(-12000,0.8,10);
             } else if (position == 1) {//middle
                 encoderDriveByPos(6900,0.6,3);
                 robot.markerGate.setPosition(0.5);
@@ -261,21 +213,21 @@ public class Tensorflow_Autonomous extends LinearOpMode {
                 turnByPID(-45,2.5);
                 encoderSlideByPos(2000,1,3);
                 encoderSlideByPos(-150,1,2);
-                encoderDriveByPos(-10000,0.6,10);
+                driveByPID(-10000,0.8,10);
             } else if (position == 2) {//right
                 turnByPID(-33,2);
                 encoderDriveByPos(3500,1,3);
                 turnByPID(33,2);
-                encoderDriveByPos(4000, 1, 3);
+                encoderDriveByPos(3500, 1, 3);
                 robot.markerGate.setPosition(0.5);
                 runtime.reset();
                 while (opModeIsActive() && runtime.seconds() < 1.5) {}
-                encoderDriveByPos(-500,1,1);
+                encoderDriveByPos(-1000,1,1);
                 turnByPID(-45,2);
                 encoderDriveByPos(-1000,1,1);
                 encoderSlideByPos(2000,1,3);
                 encoderSlideByPos( -200,1,1);
-                encoderDriveByPos(-16000,0.6,10);
+                driveByPID(-12000,0.8,10);
             }
 
 
@@ -301,9 +253,7 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         robot.leftMotor.setPower(Math.abs(speed));
         robot.rightMotor.setPower(Math.abs(speed));
         runtime.reset();
-        while (opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
+        while (opModeIsActive() && (runtime.seconds() < timeoutS) && (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
         }
 
         robot.leftMotor.setPower(0);
@@ -311,6 +261,39 @@ public class Tensorflow_Autonomous extends LinearOpMode {
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void driveByPID(int pos, double speed, double timeoutS) {
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.hMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newLeftTarget = robot.leftMotor.getCurrentPosition() + pos;
+        int newRightTarget = robot.rightMotor.getCurrentPosition() + pos;
+        robot.leftMotor.setTargetPosition(newLeftTarget);
+        robot.rightMotor.setTargetPosition(newRightTarget);
+
+        robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        updateAngle();
+        angletemp = currentAngle;
+
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < timeoutS && robot.leftMotor.isBusy() && robot.rightMotor.isBusy()) {
+            currentError = currentAngle - angletemp;
+            PID = calculatePID(currentError, previousError, 0.03, 0.001, 0, 0.2);
+            previousError = currentError;
+            robot.rightMotor.setPower(speed - PID);
+            robot.leftMotor.setPower(speed + PID);
+            updateAngle();
+            telemetry.addData("angle error:", currentError);
+            telemetry.addData("PID:", PID);
+            telemetry.update();
+        }
+        currentError = 0;
+        previousError = 0;
+        robot.rightMotor.setPower(0);
+        robot.leftMotor.setPower(0);
     }
 
     public void encoderSlideByPos(int pos, double speed, double timeoutS) {
@@ -367,44 +350,8 @@ public class Tensorflow_Autonomous extends LinearOpMode {
         return PID;
     }
 
-    public void turnByAngle(double angle, double speed, double timeoutS) {
-        runtime.reset();
-        updateAngle();
-        angletemp = currentAngle;
-        if (angle > 0) {
-            robot.leftMotor.setPower(-speed);
-            robot.rightMotor.setPower(speed);
-            while (currentAngle < angletemp + angle && opModeIsActive() && runtime.seconds() < timeoutS) {
-                updateAngle();
-                telemetry.addData("Angle: ", currentAngle);
-                telemetry.update();
-            }
-            robot.leftMotor.setPower(0);
-            robot.rightMotor.setPower(0);
-        } else {
-            robot.leftMotor.setPower(speed);
-            robot.rightMotor.setPower(-speed);
-            while (currentAngle > angletemp + angle && opModeIsActive() && runtime.seconds() < timeoutS){
-                updateAngle();
-                telemetry.addData("Angle: ", currentAngle);
-                telemetry.update();
-            }
-            robot.leftMotor.setPower(0);
-            robot.rightMotor.setPower(0);
-        }
-    }
-
-
-
     public void updateAngle() {
         currentAngle = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-    }
-
-    public int[] resetArray(int[] a) {
-        for (int i = 0; i < a.length; i++) {
-            a[i] = -1;
-        }
-        return a;
     }
 
     /**
